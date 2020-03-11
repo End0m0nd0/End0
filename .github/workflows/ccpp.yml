@@ -1,0 +1,182 @@
+#include<iostream>
+#include<conio.h>
+#include<string>
+#include<windows.h>
+#include<cstdlib>
+#include<time.h>
+using namespace std;
+
+int const szerokosc=15, wysokosc=10;
+char Pole[szerokosc][wysokosc];
+int Ascii;
+int HeadX=1;
+int HeadY=1;
+int game=1;
+int dlugosc=6;
+int Ogon[szerokosc][wysokosc];
+void Tab();
+void Map();
+void Move();
+void OgonAdd();
+void Direction();
+void idzdoxy(int, int);
+int FoodX,FoodY;
+int eat=0;
+char snake=219, pd=188, pg=187, lg=201, ld=200,poz=205,pio=186;
+
+int main()
+{
+srand(time(NULL));
+	Tab();
+FoodX=rand()%szerokosc;
+FoodY=rand()%wysokosc;
+do
+{
+FoodX=rand()%szerokosc;
+FoodY=rand()%wysokosc;
+}while(FoodX==HeadX||FoodY==HeadY);
+Pole[FoodX][FoodY]='j';
+	Pole[1][1]='w';
+	Ogon[1][1]=1;
+while(game==1)
+	{
+Map();
+Ascii=getch();
+ Move();
+	}
+system("cls");
+cout<<"GAME OVER !\n";
+cout<<"Twoj wynik to: "<<dlugosc/2;
+Sleep(1000);
+return 0;
+}
+
+
+
+
+void Map()
+{
+	idzdoxy(0,0);
+	cout<<lg;
+	for(int i=0;i<szerokosc;i++)cout<<poz<<poz;
+	cout<<pg<<endl;
+	for(int i=0;i<wysokosc;i++)
+	{
+	cout<<pio;
+	for(int n=0; n<szerokosc;n++)
+		{
+			if(Pole[n][i]=='p') cout<<"  ";												
+	else	if(Pole[n][i]=='w'||Ogon[n][i]!=0) cout<<snake<<snake;
+	else	if(Pole[n][i]=='j') cout<<"OO";
+		}
+	cout<<pio<<endl;
+	}
+	cout<<ld;
+	for(int i=0;i<szerokosc;i++)cout<<poz<<poz;
+	cout<<pd<<endl;
+	cout<<endl<<"Twoja aktualna dlugosc to: "<<dlugosc/2;
+}
+
+void Move()
+{
+switch(Ascii)
+	{
+	case 77:
+		HeadX++; if(Pole[HeadX][HeadY]=='w'&&dlugosc!=6 && eat==0) game=0;
+		break;
+	case 75:
+		HeadX--; if(Pole[HeadX][HeadY]=='w'&&dlugosc!=6 && eat==0) game=0;
+		break;
+	case 72:
+		HeadY--; if(Pole[HeadX][HeadY]=='w'&&dlugosc!=6 && eat==0) game=0;
+		break;
+	case 80:
+		HeadY++; if(Pole[HeadX][HeadY]=='w'&&dlugosc!=6 && eat==0) game=0;
+		break;
+	}
+	if(HeadX==szerokosc) game=0;
+	if(HeadY==wysokosc) game=0;
+	if(HeadX==-1) game=0;
+	if(HeadY==-1) game=0;
+	if(Pole[HeadX][HeadY]=='j')
+	{
+		dlugosc+=2;
+	 	do
+		{
+		FoodX=rand()%szerokosc;
+		FoodY=rand()%wysokosc;
+		}while(FoodX==HeadX||FoodY==HeadY);
+		Pole[FoodX][FoodY]='j';
+		eat=1;
+	}
+	Pole[HeadX][HeadY]='w';
+	eat=0;
+	Ogon[HeadX][HeadY]=1;
+	OgonAdd();
+	
+}
+	
+	
+	
+	void Tab()
+	{
+	for(int i=0;i<wysokosc;i++)
+		{
+		for(int n=0; n<szerokosc;n++)
+			{
+		Pole[n][i]='p';
+		Ogon[n][i]=0;
+			}
+		}	
+	}
+	
+void OgonAdd()
+{
+	for(int i=0;i<wysokosc;i++)
+	{
+		for(int n=0; n<szerokosc;n++)
+		{
+			if(Ogon[n][i]>0)
+			Ogon[n][i]++;
+			if(Ogon[n][i]==dlugosc)
+			{
+			Ogon[n][i]=0;
+			Pole[n][i]='p';
+			}
+		}
+	}
+}
+
+
+void Direction()
+{
+	if(kbhit())
+	{
+		Ascii=getch();
+	}
+}
+
+void idzdoxy(int x,int y)
+{
+	HANDLE hCon;
+	COORD dwPos;
+
+	dwPos.X=x;
+	dwPos.Y=y;
+	
+	hCon=GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleCursorPosition(hCon, dwPos);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
